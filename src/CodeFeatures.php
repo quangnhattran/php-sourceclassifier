@@ -1,5 +1,7 @@
 <?php
 
+namespace QT\src;
+
 use NlpTools\FeatureFactories\FeatureFactoryInterface;
 use NlpTools\Documents\DocumentInterface;
 
@@ -16,7 +18,10 @@ class CodeFeatures implements FeatureFactoryInterface
         $tokens = array_count_values($tokens);
 
         foreach ($tokens as $tok=>&$v) {
-            $v = min($v,4);
+            if (is_int($tok)) {
+                unset($tokens[$tok]);
+            }
+            //$v = min($v,4);
         }
 
         return $tokens;

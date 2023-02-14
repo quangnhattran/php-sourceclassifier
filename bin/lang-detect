@@ -4,11 +4,11 @@
 /**
  * A very simple executable script to train and use the LanguageDetector
  * class. For now it will not use a more complex (and better) structure like
- * Symfony\Console\Application but it will be a self contained little script.
+ * Symfony\Console\Application, but it will be a self-contained little script.
  */
 
-include(dirname(__DIR__)."/vendor/autoload.php");
-
+include(dirname(__DIR__) ."../../vendor/autoload.php");
+use QT\src\LanguageDetector;
 /**
  * Just echo a simple help message
  */
@@ -73,12 +73,22 @@ function classify($argv)
     $lang_detect = LanguageDetector::loadFromFile($input_model);
 
     if ($argv[2] == "-") {
-        $language = $lang_detect->classify(file_get_contents("php://stdin"));
+        while (1) {
+            $source = fgets(STDIN, 1024);
+            $source = strtolower($source);
+            $language = $lang_detect->classify($source);
+//        $score = $lang_detect->getScore($language, $source);
+            echo $language, PHP_EOL;
+        }
+/*        $language = trim(fgets(STDIN, 1024));
+        $score = $lang_detect->getScore($language, $source);
+        echo $language,$score,PHP_EOL;*/
     } else {
         $language = $lang_detect->classifyFile($argv[2]);
     }
 
-    echo $language,PHP_EOL;
+
+//    echo $lang_detect->getScore($language, fgets(STDIN, 1024)), PHP_EOL;
 }
 
 try {

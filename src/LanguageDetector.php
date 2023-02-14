@@ -1,5 +1,7 @@
 <?php
 
+namespace QT\src;
+
 use NlpTools\Tokenizers\WhitespaceAndPunctuationTokenizer;
 use NlpTools\Models\FeatureBasedNB;
 use NlpTools\Classifiers\MultinomialNBClassifier;
@@ -36,6 +38,11 @@ class LanguageDetector
 
         $doc = new TokensDocument($this->tok->tokenize($code));
         return $this->cls->classify($this->languages, $doc);
+    }
+
+    public function getScore($language, $code)
+    {
+        return $this->cls->getScore($language, new TokensDocument($this->tok->tokenize($code)));
     }
 
     /**
@@ -103,12 +110,12 @@ class LanguageDetector
     {
         $tok = new WhitespaceAndPunctuationTokenizer();
         $tset = new TrainingSet();
-        foreach (new DirectoryIterator($dir) as $d) {
+        foreach (new \DirectoryIterator($dir) as $d) {
             if ($d->isFile() || $d->isDot())
                 continue;
 
             $class = $d->getBasename();
-            foreach (new DirectoryIterator($d->getPathname()) as $f) {
+            foreach (new \DirectoryIterator($d->getPathname()) as $f) {
                 if (!$f->isFile())
                     continue;
 
@@ -116,9 +123,9 @@ class LanguageDetector
                     $class,
                     new TokensDocument(
                         $tok->tokenize(
-                            file_get_contents(
+                            strtolower(file_get_contents(
                                 $f->getPathname()
-                            )
+                            ))
                         )
                     )
                 );
